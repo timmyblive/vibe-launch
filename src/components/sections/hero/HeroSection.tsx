@@ -186,8 +186,8 @@ export default function HeroSection() {
                     <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
                     <polyline points="22 4 12 14.01 9 11.01" />
                   </svg>
-                  <p className="font-medium">You're on the list!</p>
-                  <p className="text-sm mt-1">We'll notify you when we launch.</p>
+                  <p className="font-medium">You&apos;re on the list!</p>
+                  <p className="text-sm mt-1">We&apos;ll notify you when we launch.</p>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
