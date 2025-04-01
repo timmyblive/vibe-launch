@@ -1,26 +1,125 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Light theme (default) */
+  --background: #FAFAFA;
+  --foreground: #121212;
+  --accent: #2D7FF9;
+  --accent-glow: rgba(45, 127, 249, 0.3);
+  --card-bg: rgba(255, 255, 255, 0.8);
+  --card-border: rgba(0, 0, 0, 0.05);
+  --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --glass-bg: rgba(255, 255, 255, 0.7);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-accent: var(--accent);
+  --color-accent-glow: var(--accent-glow);
+  --color-card-bg: var(--card-bg);
+  --color-card-border: var(--card-border);
+  --color-card-shadow: var(--card-shadow);
+  --color-glass-bg: var(--glass-bg);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
+.dark {
+  --background: #121212;
+  --foreground: #FAFAFA;
+  --accent: #2D7FF9;
+  --accent-glow: rgba(45, 127, 249, 0.5);
+  --card-bg: rgba(30, 30, 30, 0.8);
+  --card-border: rgba(255, 255, 255, 0.05);
+  --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  --glass-bg: rgba(30, 30, 30, 0.7);
+}
+
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  :root:not(.light) {
+    --background: #121212;
+    --foreground: #FAFAFA;
+    --accent: #2D7FF9;
+    --accent-glow: rgba(45, 127, 249, 0.5);
+    --card-bg: rgba(30, 30, 30, 0.8);
+    --card-border: rgba(255, 255, 255, 0.05);
+    --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    --glass-bg: rgba(30, 30, 30, 0.7);
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 4px;
+}
+
+/* Utility classes */
+.glass-effect {
+  background: var(--glass-bg);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--card-border);
+}
+
+.blue-glow {
+  box-shadow: 0 0 15px var(--accent-glow);
+}
+
+.text-gradient {
+  background: linear-gradient(90deg, var(--accent), #6366f1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Animation classes */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes glow {
+  0% { box-shadow: 0 0 5px var(--accent-glow); }
+  100% { box-shadow: 0 0 20px var(--accent-glow); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.5s ease-in-out;
+}
+
+.animate-glow {
+  animation: glow 3s ease-in-out infinite alternate;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
 }
