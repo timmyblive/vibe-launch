@@ -28,13 +28,13 @@ export default function RoadmapSection() {
             <li className="flex items-start">
               <span className="text-accent font-bold mr-3 text-lg">•</span>
               <div>
-                <span className="font-semibold">April 25</span>: Send first newsletter—"Why Building Alone Sucks"—target 50-100 subscribers.
+                <span className="font-semibold">April 25</span>: Send first newsletter—&quot;Why Building Alone Sucks&quot;—target 50-100 subscribers.
               </div>
             </li>
             <li className="flex items-start">
               <span className="text-accent font-bold mr-3 text-lg">•</span>
               <div>
-                <span className="font-semibold">May 1</span>: Set up community platform—basic channels like "Chat," "Ideas."
+                <span className="font-semibold">May 1</span>: Set up community platform—basic channels like &quot;Chat,&quot; &quot;Ideas.&quot;
               </div>
             </li>
             <li className="flex items-start">
