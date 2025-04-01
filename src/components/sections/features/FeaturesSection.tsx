@@ -3,14 +3,7 @@
 import React, { useEffect, useRef } from "react";
 import Card from "@/components/ui/Card";
 
-interface FeatureCardProps {
-  title: string;
-  description: string;
-  icon: React.ReactNode;
-  delay?: number;
-}
-
-function FeatureCard({ title, description, icon, delay = 0 }: FeatureCardProps) {
+export default function FeaturesSection() {
   const cardRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
@@ -18,53 +11,38 @@ function FeatureCard({ title, description, icon, delay = 0 }: FeatureCardProps) 
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            setTimeout(() => {
-              entry.target.classList.add("animate-slide-up");
-              entry.target.classList.remove("opacity-0", "translate-y-10");
-            }, delay);
-            observer.unobserve(entry.target);
+            entry.target.classList.add("animate-fade-in");
           }
         });
       },
       { threshold: 0.1 }
     );
     
-    if (cardRef.current) {
-      observer.observe(cardRef.current);
+    // Store the current value of the ref
+    const currentCardRef = cardRef.current;
+    
+    if (currentCardRef) {
+      const cards = currentCardRef.querySelectorAll(".feature-card");
+      cards.forEach((card) => {
+        observer.observe(card);
+      });
     }
     
     return () => {
-      if (cardRef.current) {
-        observer.unobserve(cardRef.current);
+      // Use the stored ref value in the cleanup function
+      if (currentCardRef) {
+        const cards = currentCardRef.querySelectorAll(".feature-card");
+        cards.forEach((card) => {
+          observer.unobserve(card);
+        });
       }
     };
-  }, [delay]);
+  }, []);
 
-  return (
-    <div
-      ref={cardRef}
-      className="opacity-0 translate-y-10 transition-all duration-700"
-    >
-      <Card variant="glass" hoverEffect={true}>
-        <Card.Header>
-          <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center text-accent mb-4">
-            {icon}
-          </div>
-          <Card.Title>{title}</Card.Title>
-        </Card.Header>
-        <Card.Body>
-          <Card.Description>{description}</Card.Description>
-        </Card.Body>
-      </Card>
-    </div>
-  );
-}
-
-export default function FeaturesSection() {
   const features = [
     {
-      title: "Responsive Design",
-      description: "Fully responsive layout that looks great on all devices, from mobile phones to large desktop screens.",
+      title: "Intuitive Interface",
+      description: "Clean, modern UI with thoughtful interactions and smooth animations.",
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -76,6 +54,7 @@ export default function FeaturesSection() {
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
+          className="text-accent"
         >
           <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
           <line x1="8" y1="21" x2="16" y2="21" />
@@ -84,8 +63,8 @@ export default function FeaturesSection() {
       ),
     },
     {
-      title: "Dark/Light Mode",
-      description: "Toggle between dark and light themes with a beautiful transition effect for comfortable viewing.",
+      title: "Responsive Design",
+      description: "Perfectly optimized for all devices, from mobile phones to large desktops.",
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -97,14 +76,16 @@ export default function FeaturesSection() {
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
+          className="text-accent"
         >
-          <path d="M12 3v1M12 20v1M3 12h1M20 12h1M18.364 5.636l-.707.707M6.343 17.657l-.707.707M5.636 5.636l.707.707M17.657 17.657l.707.707M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0z" />
+          <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+          <line x1="12" y1="18" x2="12.01" y2="18" />
         </svg>
       ),
     },
     {
-      title: "Futuristic UI",
-      description: "Modern interface with subtle animations, glowing effects, and a tech-inspired aesthetic.",
+      title: "Advanced Analytics",
+      description: "Comprehensive insights and data visualization to track performance metrics.",
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -116,14 +97,17 @@ export default function FeaturesSection() {
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
+          className="text-accent"
         >
-          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+          <line x1="18" y1="20" x2="18" y2="10" />
+          <line x1="12" y1="20" x2="12" y2="4" />
+          <line x1="6" y1="20" x2="6" y2="14" />
         </svg>
       ),
     },
     {
-      title: "Performance Optimized",
-      description: "Lightweight and fast-loading components with optimized animations for smooth user experience.",
+      title: "Secure Infrastructure",
+      description: "Enterprise-grade security with end-to-end encryption and regular audits.",
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -135,14 +119,16 @@ export default function FeaturesSection() {
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
+          className="text-accent"
         >
-          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
         </svg>
       ),
     },
     {
-      title: "Interactive Elements",
-      description: "Engaging UI components with hover effects, micro-interactions, and smooth transitions.",
+      title: "Seamless Integration",
+      description: "Connect with your favorite tools and services through our robust API.",
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -154,15 +140,16 @@ export default function FeaturesSection() {
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
+          className="text-accent"
         >
-          <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
-          <circle cx="12" cy="12" r="3" />
+          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
         </svg>
       ),
     },
     {
-      title: "Customizable",
-      description: "Easily adaptable design with modular components that can be customized to fit your brand.",
+      title: "24/7 Support",
+      description: "Dedicated support team available around the clock to assist with any issues.",
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -174,112 +161,39 @@ export default function FeaturesSection() {
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
+          className="text-accent"
         >
-          <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
-          <circle cx="12" cy="12" r="3" />
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
         </svg>
       ),
     },
   ];
 
   return (
-    <section id="features" className="py-20 md:py-32 bg-background">
-      <div className="max-w-7xl mx-auto px-6 md:px-12">
+    <section id="features" className="py-20">
+      <div className="container mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="text-headline font-bold mb-6">
-            Powerful <span className="text-gradient">Features</span>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            <span className="text-gradient">Key Features</span>
           </h2>
-          <p className="text-body text-foreground/70 max-w-2xl mx-auto">
-            Our modern tech landing page comes with everything you need to showcase your product or service with style and sophistication.
+          <p className="text-foreground/70 max-w-2xl mx-auto">
+            Discover what makes VibeLaunch the perfect platform for your needs
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div ref={cardRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((feature, index) => (
-            <FeatureCard
+            <Card
               key={index}
-              title={feature.title}
-              description={feature.description}
-              icon={feature.icon}
-              delay={index * 100}
-            />
-          ))}
-        </div>
-        
-        {/* Feature highlight */}
-        <div className="mt-20 glass-effect rounded-2xl p-8 md:p-12 overflow-hidden relative">
-          <div className="absolute -top-24 -right-24 w-48 h-48 bg-accent/20 rounded-full blur-3xl"></div>
-          <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-accent/20 rounded-full blur-3xl"></div>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
-            <div>
-              <h3 className="text-2xl font-bold mb-4">
-                Advanced Animation System
-              </h3>
-              <p className="text-foreground/70 mb-6">
-                Our landing page includes a sophisticated animation system that brings your content to life with subtle, performance-optimized effects that enhance the user experience without overwhelming visitors.
-              </p>
-              <ul className="space-y-3">
-                {[
-                  "Scroll-triggered animations",
-                  "Interactive hover effects",
-                  "Smooth page transitions",
-                  "Particle background system",
-                  "Optimized for performance",
-                ].map((item, index) => (
-                  <li key={index} className="flex items-start">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="text-accent mr-2 mt-1 flex-shrink-0"
-                    >
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            
-            <div className="relative">
-              <div className="aspect-video rounded-xl overflow-hidden bg-gradient-to-br from-accent/10 to-accent/5 p-4 blue-glow">
-                <div className="w-full h-full rounded-lg bg-background/20 backdrop-blur-sm border border-accent/10 flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-accent/20 flex items-center justify-center animate-pulse">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="32"
-                        height="32"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="text-accent"
-                      >
-                        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-                      </svg>
-                    </div>
-                    <p className="text-sm text-foreground/60">
-                      Animation preview placeholder
-                    </p>
-                  </div>
-                </div>
+              className="feature-card opacity-0 transition-opacity duration-500 ease-in-out"
+            >
+              <div className="flex flex-col items-center text-center p-6">
+                <div className="mb-4 p-3 rounded-full bg-accent/10">{feature.icon}</div>
+                <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+                <p className="text-foreground/70">{feature.description}</p>
               </div>
-              
-              {/* Decorative elements */}
-              <div className="absolute -top-4 -left-4 w-8 h-8 border border-accent/30 rounded-lg"></div>
-              <div className="absolute -bottom-4 -right-4 w-8 h-8 border border-accent/30 rounded-lg"></div>
-            </div>
-          </div>
+            </Card>
+          ))}
         </div>
       </div>
     </section>
