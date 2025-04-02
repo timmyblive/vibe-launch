@@ -67,7 +67,7 @@ export default function HeroSection() {
         {/* 3D model side (right) - takes full width on mobile, half on desktop */}
         <div className="absolute inset-0 md:left-1/3 z-10" ref={containerRef}>
           <Spline 
-            scene="https://prod.spline.design/XCi9THQBrzQxCOnd/scene.splinecode"
+            scene="/scene.splinecode"
             onLoad={(spline) => {
               splineRef.current = spline;
               setIsLoading(false);
