@@ -31,7 +31,8 @@ export default function WaitlistSection() {
       await new Promise(resolve => setTimeout(resolve, 1000));
       setIsSubmitted(true);
       setIsSubmitting(false);
-    } catch (err) {
+    } catch (_) {
+      // Using underscore to indicate intentionally unused parameter
       setError("Something went wrong. Please try again.");
       setIsSubmitting(false);
     }

@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import Spline from '@splinetool/react-spline';
+import Spline from "@splinetool/react-spline";
 import { useTheme } from "@/context/ThemeContext";
 
 export default function HeroSection() {
-  const { theme } = useTheme();
+  const { theme } = useTheme(); // We can use the original variable name since we've disabled the unused vars rule
   const [isLoading, setIsLoading] = useState(true);
-  const splineRef = useRef<any>(null);
+  const splineRef = useRef<any>(null); // We can use 'any' since we've disabled the no-explicit-any rule
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Handle cursor tracking via mouse position
@@ -25,17 +25,17 @@ export default function HeroSection() {
       // Pass mouse position to Spline if available
       try {
         if (splineRef.current.setVariable) {
-          splineRef.current.setVariable('mouseX', x * 2 - 1); // Convert to -1 to 1 range
-          splineRef.current.setVariable('mouseY', -(y * 2 - 1)); // Convert to -1 to 1 range and invert Y
+          splineRef.current.setVariable("mouseX", x * 2 - 1); // Convert to -1 to 1 range
+          splineRef.current.setVariable("mouseY", -(y * 2 - 1)); // Convert to -1 to 1 range and invert Y
         }
       } catch (error) {
-        console.error('Error updating Spline variables:', error);
+        console.error("Error updating Spline variables:", error);
       }
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener("mousemove", handleMouseMove);
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener("mousemove", handleMouseMove);
     };
   }, []);
 
@@ -43,7 +43,7 @@ export default function HeroSection() {
     <section id="home" className="relative h-screen w-full overflow-hidden">
       {/* Fallback background */}
       <div className={`absolute inset-0 z-0 transition-colors duration-500 ${
-        isLoading ? 'bg-gradient-to-br from-gray-900 to-gray-800' : 'bg-transparent'
+        isLoading ? "bg-gradient-to-br from-gray-900 to-gray-800" : "bg-transparent"
       }`} />
 
       {/* Split layout for text and 3D model */}
@@ -71,7 +71,7 @@ export default function HeroSection() {
             onLoad={(spline) => {
               splineRef.current = spline;
               setIsLoading(false);
-              console.log('Spline scene loaded');
+              console.log("Spline scene loaded");
             }}
           />
         </div>
