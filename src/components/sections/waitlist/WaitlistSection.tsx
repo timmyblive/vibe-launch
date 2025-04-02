@@ -37,10 +37,30 @@ export default function WaitlistSection() {
     }
   };
 
+  // Safari-friendly styles
+  const safariStyles = {
+    container: {
+      transform: 'translateZ(0)',
+      WebkitTransform: 'translateZ(0)',
+    } as React.CSSProperties,
+    gradientBg: {
+      background: 'linear-gradient(to right, #2563eb, #9333ea)',
+      WebkitBackgroundClip: 'text',
+      WebkitTextFillColor: 'transparent',
+    } as React.CSSProperties,
+    blurEffect: {
+      WebkitBackdropFilter: 'blur(24px)',
+      backdropFilter: 'blur(24px)',
+    } as React.CSSProperties
+  };
+
   return (
-    <section className="relative py-16 overflow-hidden">
+    <section className="relative py-16 overflow-hidden" style={safariStyles.container}>
       {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 opacity-90"></div>
+      <div 
+        className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 opacity-90"
+        style={safariStyles.container}
+      ></div>
       
       {/* Futuristic grid pattern */}
       <div className="absolute inset-0 opacity-10">
@@ -50,7 +70,13 @@ export default function WaitlistSection() {
       {/* Content */}
       <div className="relative z-10 container mx-auto px-6 py-8">
         <div className="max-w-4xl mx-auto">
-          <div className="bg-black/30 backdrop-blur-xl p-8 rounded-2xl border border-white/10 shadow-2xl">
+          <div 
+            className="bg-black/30 p-8 rounded-2xl border border-white/10 shadow-2xl"
+            style={{
+              ...safariStyles.blurEffect,
+              ...safariStyles.container
+            }}
+          >
             <div className="text-center mb-8">
               <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
                 Join the Waitlist
@@ -77,12 +103,14 @@ export default function WaitlistSection() {
                       placeholder="Enter your email"
                       className="bg-white/10 border border-white/20 text-white placeholder-white/50 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-12 p-4"
                       required
+                      style={safariStyles.container}
                     />
                   </div>
                   <button
                     type="submit"
                     disabled={isSubmitting}
                     className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium rounded-lg text-sm px-6 py-4 text-center inline-flex items-center justify-center transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-70"
+                    style={safariStyles.container}
                   >
                     {isSubmitting ? (
                       <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -96,7 +124,10 @@ export default function WaitlistSection() {
                 {error && <p className="mt-2 text-red-400 text-sm">{error}</p>}
               </form>
             ) : (
-              <div className="text-center p-6 bg-white/5 rounded-lg border border-white/10">
+              <div 
+                className="text-center p-6 bg-white/5 rounded-lg border border-white/10"
+                style={safariStyles.container}
+              >
                 <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-green-500/20 text-green-500 mb-4">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -108,8 +139,14 @@ export default function WaitlistSection() {
             )}
             
             {/* Futuristic decorative elements */}
-            <div className="absolute -top-4 -right-4 w-24 h-24 bg-blue-500 rounded-full blur-3xl opacity-20"></div>
-            <div className="absolute -bottom-8 -left-8 w-40 h-40 bg-purple-500 rounded-full blur-3xl opacity-20"></div>
+            <div 
+              className="absolute -top-4 -right-4 w-24 h-24 bg-blue-500 rounded-full blur-3xl opacity-20"
+              style={safariStyles.container}
+            ></div>
+            <div 
+              className="absolute -bottom-8 -left-8 w-40 h-40 bg-purple-500 rounded-full blur-3xl opacity-20"
+              style={safariStyles.container}
+            ></div>
           </div>
         </div>
       </div>

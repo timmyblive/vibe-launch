@@ -20,6 +20,11 @@ export const metadata: Metadata = {
   title: "VibelaunchLaunch - Modern Tech Landing Page",
   description: "A clean, minimalist design with futuristic elements, subtle blue glow effects, and interactive components.",
   keywords: "tech, landing page, modern, futuristic, UI, design",
+  viewport: "width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+  },
 };
 
 export default function RootLayout({
@@ -29,6 +34,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth">
+      <head>
+        {/* Safari-specific meta tags */}
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

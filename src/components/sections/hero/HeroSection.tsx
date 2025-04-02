@@ -7,8 +7,18 @@ import { useTheme } from "@/context/ThemeContext";
 export default function HeroSection() {
   const { theme } = useTheme();
   const [isLoading, setIsLoading] = useState(true);
+  const [isSafari, setIsSafari] = useState(false);
   const splineRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Detect Safari browser
+  useEffect(() => {
+    const isSafariBrowser = 
+      /^((?!chrome|android).)*safari/i.test(navigator.userAgent) ||
+      /iPad|iPhone|iPod/.test(navigator.userAgent);
+    
+    setIsSafari(isSafariBrowser);
+  }, []);
 
   // Handle cursor tracking via mouse position
   useEffect(() => {
@@ -29,7 +39,7 @@ export default function HeroSection() {
           splineRef.current.setVariable('mouseY', -(y * 2 - 1)); // Convert to -1 to 1 range and invert Y
         }
       } catch (error) {
-        console.error('Error updating Spline variables:', error);
+        // Silently handle errors for Safari
       }
     };
 
@@ -38,6 +48,29 @@ export default function HeroSection() {
       window.removeEventListener('mousemove', handleMouseMove);
     };
   }, []);
+
+  // Safari fallback component
+  const SafariFallback = () => (
+    <div className="w-full h-full flex items-center justify-center">
+      <div 
+        className="w-64 h-64 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 animate-float"
+        style={{
+          boxShadow: '0 0 30px rgba(45, 127, 249, 0.5)',
+          transform: 'translateZ(0)', // Force hardware acceleration
+          WebkitTransform: 'translateZ(0)',
+        }}
+      >
+        <div className="w-full h-full flex items-center justify-center">
+          <div className="w-48 h-48 rounded-xl bg-black flex items-center justify-center">
+            <div className="flex space-x-4">
+              <div className="w-8 h-8 rounded-full bg-white"></div>
+              <div className="w-8 h-8 rounded-full bg-white"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <section id="home" className="relative h-screen w-full overflow-hidden">
@@ -66,14 +99,22 @@ export default function HeroSection() {
 
         {/* 3D model side (right) - takes full width on mobile, half on desktop */}
         <div className="absolute inset-0 md:left-1/3 z-10" ref={containerRef}>
-          <Spline 
-            scene="https://prod.spline.design/XCi9THQBrzQxCOnd/scene.splinecode"
-            onLoad={(spline) => {
-              splineRef.current = spline;
-              setIsLoading(false);
-              console.log('Spline scene loaded');
-            }}
-          />
+          {isSafari ? (
+            <SafariFallback />
+          ) : (
+            <Spline 
+              scene="https://prod.spline.design/XCi9THQBrzQxCOnd/scene.splinecode"
+              onLoad={(spline) => {
+                splineRef.current = spline;
+                setIsLoading(false);
+                console.log('Spline scene loaded');
+              }}
+              style={{
+                transform: 'translateZ(0)', // Force hardware acceleration
+                WebkitTransform: 'translateZ(0)',
+              }}
+            />
+          )}
         </div>
       </div>
 
@@ -97,6 +138,10 @@ export default function HeroSection() {
           strokeLinecap="round"
           strokeLinejoin="round"
           className="text-white drop-shadow-lg"
+          style={{
+            transform: 'translateZ(0)', // Force hardware acceleration
+            WebkitTransform: 'translateZ(0)',
+          }}
         >
           <path d="M12 5v14M19 12l-7 7-7-7" />
         </svg>

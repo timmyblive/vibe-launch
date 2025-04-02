@@ -54,6 +54,8 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans);
   transition: background-color 0.3s ease, color 0.3s ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Custom scrollbar */
@@ -73,18 +75,41 @@ body {
 /* Utility classes */
 .glass-effect {
   background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
   border: 1px solid var(--card-border);
 }
 
+/* Safari-specific backdrop-filter fix */
+@supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
+  .backdrop-blur-xl,
+  .backdrop-blur-lg,
+  .backdrop-blur-md,
+  .backdrop-blur-sm,
+  .backdrop-blur {
+    -webkit-backdrop-filter: blur(24px);
+    backdrop-filter: blur(24px);
+  }
+  
+  .glass-effect {
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    /* Add a solid background color as fallback for older Safari versions */
+    background-color: var(--background);
+  }
+}
+
 .blue-glow {
+  -webkit-box-shadow: 0 0 15px var(--accent-glow);
   box-shadow: 0 0 15px var(--accent-glow);
 }
 
 .text-gradient {
   background: linear-gradient(90deg, var(--accent), #6366f1);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
+  text-fill-color: transparent;
 }
 
 /* Animation classes */
@@ -93,33 +118,126 @@ body {
   to { opacity: 1; }
 }
 
+@-webkit-keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 @keyframes slideUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from { 
+    -webkit-transform: translateY(20px); 
+    transform: translateY(20px); 
+    opacity: 0; 
+  }
+  to { 
+    -webkit-transform: translateY(0); 
+    transform: translateY(0); 
+    opacity: 1; 
+  }
+}
+
+@-webkit-keyframes slideUp {
+  from { 
+    -webkit-transform: translateY(20px); 
+    transform: translateY(20px); 
+    opacity: 0; 
+  }
+  to { 
+    -webkit-transform: translateY(0); 
+    transform: translateY(0); 
+    opacity: 1; 
+  }
 }
 
 @keyframes glow {
-  0% { box-shadow: 0 0 5px var(--accent-glow); }
-  100% { box-shadow: 0 0 20px var(--accent-glow); }
+  0% { 
+    -webkit-box-shadow: 0 0 5px var(--accent-glow);
+    box-shadow: 0 0 5px var(--accent-glow); 
+  }
+  100% { 
+    -webkit-box-shadow: 0 0 20px var(--accent-glow);
+    box-shadow: 0 0 20px var(--accent-glow); 
+  }
+}
+
+@-webkit-keyframes glow {
+  0% { 
+    -webkit-box-shadow: 0 0 5px var(--accent-glow);
+    box-shadow: 0 0 5px var(--accent-glow); 
+  }
+  100% { 
+    -webkit-box-shadow: 0 0 20px var(--accent-glow);
+    box-shadow: 0 0 20px var(--accent-glow); 
+  }
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+  0%, 100% { 
+    -webkit-transform: translateY(0);
+    transform: translateY(0); 
+  }
+  50% { 
+    -webkit-transform: translateY(-10px);
+    transform: translateY(-10px); 
+  }
+}
+
+@-webkit-keyframes float {
+  0%, 100% { 
+    -webkit-transform: translateY(0);
+    transform: translateY(0); 
+  }
+  50% { 
+    -webkit-transform: translateY(-10px);
+    transform: translateY(-10px); 
+  }
 }
 
 .animate-fade-in {
+  -webkit-animation: fadeIn 0.5s ease-in-out;
   animation: fadeIn 0.5s ease-in-out;
 }
 
 .animate-slide-up {
+  -webkit-animation: slideUp 0.5s ease-in-out;
   animation: slideUp 0.5s ease-in-out;
 }
 
 .animate-glow {
+  -webkit-animation: glow 3s ease-in-out infinite alternate;
   animation: glow 3s ease-in-out infinite alternate;
 }
 
 .animate-float {
+  -webkit-animation: float 6s ease-in-out infinite;
   animation: float 6s ease-in-out infinite;
+}
+
+/* Safari-specific fixes */
+/* Fix for Safari's transform issues */
+.transform {
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* Fix for Safari's flex issues */
+.flex {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.flex-col {
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
+/* Fix for Safari's grid issues */
+.grid {
+  display: -ms-grid;
+  display: grid;
 }
