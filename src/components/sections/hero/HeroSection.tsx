@@ -4,24 +4,97 @@ import React, { useState, useRef, useEffect } from "react";
 import Spline from '@splinetool/react-spline';
 import { useTheme } from "@/context/ThemeContext";
 
+// More robust Safari detection
+const isSafariBrowser = () => {
+  if (typeof window === 'undefined') return false;
+  
+  const ua = window.navigator.userAgent;
+  const isSafari = 
+    /^((?!chrome|android).)*safari/i.test(ua) || 
+    /iPad|iPhone|iPod/.test(ua) ||
+    (ua.includes('AppleWebKit') && !ua.includes('Chrome'));
+    
+  // Additional check for Safari's WebKit version
+  const webkitVersionMatch = ua.match(/Version\/(\d+)\.(\d+)(?:\.(\d+))?.*Safari/);
+  if (webkitVersionMatch) {
+    const majorVersion = parseInt(webkitVersionMatch[1], 10);
+    return true; // It's definitely Safari
+  }
+  
+  return isSafari;
+};
+
+// Spline wrapper component with Safari fallback
+const SplineWrapper = ({ onLoad }: { onLoad: (spline: any) => void }) => {
+  const [fallbackLoaded, setFallbackLoaded] = useState(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const splineRef = useRef<any>(null);
+  
+  // For Safari, use an iframe approach which often has better compatibility
+  if (isSafariBrowser()) {
+    return (
+      <div className="w-full h-full relative">
+        {/* Static 3D model image for Safari */}
+        <div 
+          className="absolute inset-0 flex items-center justify-center"
+          style={{
+            opacity: fallbackLoaded ? 1 : 0,
+            transition: 'opacity 0.5s ease-in-out',
+          }}
+        >
+          <div className="w-64 h-64 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 animate-float">
+            <div className="w-full h-full flex items-center justify-center">
+              <div className="w-48 h-48 rounded-xl bg-black flex items-center justify-center">
+                <div className="flex space-x-4">
+                  <div className="w-8 h-8 rounded-full bg-white"></div>
+                  <div className="w-8 h-8 rounded-full bg-white"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Iframe fallback for Safari */}
+        <iframe
+          ref={iframeRef}
+          src="https://my.spline.design/untitled-d9b9d8c9e4c7c9f9d9b9d8c9e4c7c9f9/"
+          className="w-full h-full absolute inset-0 opacity-0 pointer-events-none"
+          onLoad={() => {
+            setFallbackLoaded(true);
+            if (onLoad) onLoad({});
+          }}
+          title="3D Model"
+        />
+      </div>
+    );
+  }
+  
+  // For other browsers, use the Spline component
+  return (
+    <Spline 
+      scene="https://prod.spline.design/XCi9THQBrzQxCOnd/scene.splinecode"
+      onLoad={(spline) => {
+        splineRef.current = spline;
+        if (onLoad) onLoad(spline);
+      }}
+      style={{
+        width: '100%',
+        height: '100%',
+      }}
+    />
+  );
+};
+
 export default function HeroSection() {
   const { theme } = useTheme();
   const [isLoading, setIsLoading] = useState(true);
-  const [isSafari, setIsSafari] = useState(false);
-  const splineRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  // Detect Safari browser
-  useEffect(() => {
-    const isSafariBrowser = 
-      /^((?!chrome|android).)*safari/i.test(navigator.userAgent) ||
-      /iPad|iPhone|iPod/.test(navigator.userAgent);
-    
-    setIsSafari(isSafariBrowser);
-  }, []);
+  const splineRef = useRef<any>(null);
 
   // Handle cursor tracking via mouse position
   useEffect(() => {
+    if (isSafariBrowser()) return; // Skip for Safari
+    
     const handleMouseMove = (e: MouseEvent) => {
       if (!containerRef.current || !splineRef.current) return;
       
@@ -39,7 +112,7 @@ export default function HeroSection() {
           splineRef.current.setVariable('mouseY', -(y * 2 - 1)); // Convert to -1 to 1 range and invert Y
         }
       } catch (error) {
-        // Silently handle errors for Safari
+        // Silently handle errors
       }
     };
 
@@ -48,29 +121,6 @@ export default function HeroSection() {
       window.removeEventListener('mousemove', handleMouseMove);
     };
   }, []);
-
-  // Safari fallback component
-  const SafariFallback = () => (
-    <div className="w-full h-full flex items-center justify-center">
-      <div 
-        className="w-64 h-64 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 animate-float"
-        style={{
-          boxShadow: '0 0 30px rgba(45, 127, 249, 0.5)',
-          transform: 'translateZ(0)', // Force hardware acceleration
-          WebkitTransform: 'translateZ(0)',
-        }}
-      >
-        <div className="w-full h-full flex items-center justify-center">
-          <div className="w-48 h-48 rounded-xl bg-black flex items-center justify-center">
-            <div className="flex space-x-4">
-              <div className="w-8 h-8 rounded-full bg-white"></div>
-              <div className="w-8 h-8 rounded-full bg-white"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
 
   return (
     <section id="home" className="relative h-screen w-full overflow-hidden">
@@ -99,22 +149,13 @@ export default function HeroSection() {
 
         {/* 3D model side (right) - takes full width on mobile, half on desktop */}
         <div className="absolute inset-0 md:left-1/3 z-10" ref={containerRef}>
-          {isSafari ? (
-            <SafariFallback />
-          ) : (
-            <Spline 
-              scene="https://prod.spline.design/XCi9THQBrzQxCOnd/scene.splinecode"
-              onLoad={(spline) => {
-                splineRef.current = spline;
-                setIsLoading(false);
-                console.log('Spline scene loaded');
-              }}
-              style={{
-                transform: 'translateZ(0)', // Force hardware acceleration
-                WebkitTransform: 'translateZ(0)',
-              }}
-            />
-          )}
+          <SplineWrapper 
+            onLoad={(spline) => {
+              splineRef.current = spline;
+              setIsLoading(false);
+              console.log('Spline scene loaded');
+            }}
+          />
         </div>
       </div>
 
@@ -138,10 +179,6 @@ export default function HeroSection() {
           strokeLinecap="round"
           strokeLinejoin="round"
           className="text-white drop-shadow-lg"
-          style={{
-            transform: 'translateZ(0)', // Force hardware acceleration
-            WebkitTransform: 'translateZ(0)',
-          }}
         >
           <path d="M12 5v14M19 12l-7 7-7-7" />
         </svg>
