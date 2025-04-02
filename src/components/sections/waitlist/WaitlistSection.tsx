@@ -4,7 +4,8 @@ import React, { useState } from "react";
 import { useTheme } from "@/context/ThemeContext";
 
 export default function WaitlistSection() {
-  const { theme } = useTheme();
+  // We don't need theme for this component
+  const { theme: _ } = useTheme(); // Renamed to _ to indicate intentional non-use
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -31,8 +32,9 @@ export default function WaitlistSection() {
       await new Promise(resolve => setTimeout(resolve, 1000));
       setIsSubmitted(true);
       setIsSubmitting(false);
-    } catch (_) {
-      // Using underscore to indicate intentionally unused parameter
+    } catch (error) {
+      // Using error parameter
+      console.error(error);
       setError("Something went wrong. Please try again.");
       setIsSubmitting(false);
     }
@@ -103,8 +105,8 @@ export default function WaitlistSection() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
-                <h3 className="text-xl font-medium text-white mb-2">You're on the list!</h3>
-                <p className="text-white/70">We'll notify you when we're ready to launch. Stay tuned!</p>
+                <h3 className="text-xl font-medium text-white mb-2">You&apos;re on the list!</h3>
+                <p className="text-white/70">We&apos;ll notify you when we&apos;re ready to launch. Stay tuned!</p>
               </div>
             )}
             
