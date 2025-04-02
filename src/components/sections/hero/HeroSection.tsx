@@ -1,99 +1,69 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import Spline from '@splinetool/react-spline';
+import dynamic from "next/dynamic";
 import { useTheme } from "@/context/ThemeContext";
 
-// More robust Safari detection
+// Dynamically import Spline with no SSR to avoid hydration mismatch
+const Spline = dynamic(() => import("@splinetool/react-spline"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full flex items-center justify-center">
+      <div className="animate-pulse text-white/80">Loading 3D experience...</div>
+    </div>
+  ),
+});
+
+// Safari detection function - client-side only
 const isSafariBrowser = () => {
-  if (typeof window === 'undefined') return false;
+  if (typeof window === "undefined") return false;
   
   const ua = window.navigator.userAgent;
-  const isSafari = 
+  return (
     /^((?!chrome|android).)*safari/i.test(ua) || 
     /iPad|iPhone|iPod/.test(ua) ||
-    (ua.includes('AppleWebKit') && !ua.includes('Chrome'));
-    
-  // Additional check for Safari's WebKit version
-  const webkitVersionMatch = ua.match(/Version\/(\d+)\.(\d+)(?:\.(\d+))?.*Safari/);
-  if (webkitVersionMatch) {
-    const majorVersion = parseInt(webkitVersionMatch[1], 10);
-    return true; // It's definitely Safari
-  }
-  
-  return isSafari;
-};
-
-// Spline wrapper component with Safari fallback
-const SplineWrapper = ({ onLoad }: { onLoad: (spline: any) => void }) => {
-  const [fallbackLoaded, setFallbackLoaded] = useState(false);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
-  const splineRef = useRef<any>(null);
-  
-  // For Safari, use an iframe approach which often has better compatibility
-  if (isSafariBrowser()) {
-    return (
-      <div className="w-full h-full relative">
-        {/* Static 3D model image for Safari */}
-        <div 
-          className="absolute inset-0 flex items-center justify-center"
-          style={{
-            opacity: fallbackLoaded ? 1 : 0,
-            transition: 'opacity 0.5s ease-in-out',
-          }}
-        >
-          <div className="w-64 h-64 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 animate-float">
-            <div className="w-full h-full flex items-center justify-center">
-              <div className="w-48 h-48 rounded-xl bg-black flex items-center justify-center">
-                <div className="flex space-x-4">
-                  <div className="w-8 h-8 rounded-full bg-white"></div>
-                  <div className="w-8 h-8 rounded-full bg-white"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        {/* Iframe fallback for Safari */}
-        <iframe
-          ref={iframeRef}
-          src="https://my.spline.design/untitled-d9b9d8c9e4c7c9f9d9b9d8c9e4c7c9f9/"
-          className="w-full h-full absolute inset-0 opacity-0 pointer-events-none"
-          onLoad={() => {
-            setFallbackLoaded(true);
-            if (onLoad) onLoad({});
-          }}
-          title="3D Model"
-        />
-      </div>
-    );
-  }
-  
-  // For other browsers, use the Spline component
-  return (
-    <Spline 
-      scene="https://prod.spline.design/XCi9THQBrzQxCOnd/scene.splinecode"
-      onLoad={(spline) => {
-        splineRef.current = spline;
-        if (onLoad) onLoad(spline);
-      }}
-      style={{
-        width: '100%',
-        height: '100%',
-      }}
-    />
+    (ua.includes("AppleWebKit") && !ua.includes("Chrome"))
   );
 };
+
+// Fallback component for Safari
+const SafariFallback = () => (
+  <div className="w-full h-full flex items-center justify-center">
+    <div 
+      className="w-64 h-64 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 animate-float"
+      style={{
+        boxShadow: "0 0 30px rgba(45, 127, 249, 0.5)",
+      }}
+    >
+      <div className="w-full h-full flex items-center justify-center">
+        <div className="w-48 h-48 rounded-xl bg-black flex items-center justify-center">
+          <div className="flex space-x-4">
+            <div className="w-8 h-8 rounded-full bg-white"></div>
+            <div className="w-8 h-8 rounded-full bg-white"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
 
 export default function HeroSection() {
   const { theme } = useTheme();
   const [isLoading, setIsLoading] = useState(true);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [isSafari, setIsSafari] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const splineRef = useRef<any>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Only run on client-side
+  useEffect(() => {
+    setIsMounted(true);
+    setIsSafari(isSafariBrowser());
+  }, []);
 
   // Handle cursor tracking via mouse position
   useEffect(() => {
-    if (isSafariBrowser()) return; // Skip for Safari
+    if (!isMounted || isSafari) return;
     
     const handleMouseMove = (e: MouseEvent) => {
       if (!containerRef.current || !splineRef.current) return;
@@ -108,25 +78,25 @@ export default function HeroSection() {
       // Pass mouse position to Spline if available
       try {
         if (splineRef.current.setVariable) {
-          splineRef.current.setVariable('mouseX', x * 2 - 1); // Convert to -1 to 1 range
-          splineRef.current.setVariable('mouseY', -(y * 2 - 1)); // Convert to -1 to 1 range and invert Y
+          splineRef.current.setVariable("mouseX", x * 2 - 1);
+          splineRef.current.setVariable("mouseY", -(y * 2 - 1));
         }
       } catch (error) {
         // Silently handle errors
       }
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener("mousemove", handleMouseMove);
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener("mousemove", handleMouseMove);
     };
-  }, []);
+  }, [isMounted, isSafari]);
 
   return (
     <section id="home" className="relative h-screen w-full overflow-hidden">
       {/* Fallback background */}
       <div className={`absolute inset-0 z-0 transition-colors duration-500 ${
-        isLoading ? 'bg-gradient-to-br from-gray-900 to-gray-800' : 'bg-transparent'
+        isLoading ? "bg-gradient-to-br from-gray-900 to-gray-800" : "bg-transparent"
       }`} />
 
       {/* Split layout for text and 3D model */}
@@ -149,18 +119,30 @@ export default function HeroSection() {
 
         {/* 3D model side (right) - takes full width on mobile, half on desktop */}
         <div className="absolute inset-0 md:left-1/3 z-10" ref={containerRef}>
-          <SplineWrapper 
-            onLoad={(spline) => {
-              splineRef.current = spline;
-              setIsLoading(false);
-              console.log('Spline scene loaded');
-            }}
-          />
+          {!isMounted ? (
+            // Initial loading state (server-side and first client render)
+            <div className="w-full h-full flex items-center justify-center">
+              <div className="animate-pulse text-white/80">Loading experience...</div>
+            </div>
+          ) : isSafari ? (
+            // Safari fallback
+            <SafariFallback />
+          ) : (
+            // Spline for other browsers
+            <Spline 
+              scene="https://prod.spline.design/XCi9THQBrzQxCOnd/scene.splinecode"
+              onLoad={(spline) => {
+                splineRef.current = spline;
+                setIsLoading(false);
+                console.log("Spline scene loaded");
+              }}
+            />
+          )}
         </div>
       </div>
 
       {/* Loading indicator */}
-      {isLoading && (
+      {isLoading && isMounted && (
         <div className="absolute inset-0 z-30 flex items-center justify-center">
           <div className="animate-pulse text-white/80">Loading interactive experience...</div>
         </div>
