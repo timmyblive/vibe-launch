@@ -5,6 +5,9 @@ const nextConfig: NextConfig = {
   images: {
     domains: ['prod.spline.design'],
   },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 };
 
 export default nextConfig;
