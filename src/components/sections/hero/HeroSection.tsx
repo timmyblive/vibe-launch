@@ -22,8 +22,8 @@ const isSafariBrowser = () => {
   );
 };
 
-// Fallback component for Safari
-const SafariFallback = () => (
+// Fallback component for when Spline fails to load
+const SplineFallback = () => (
   <div className="w-full h-full flex items-center justify-center">
     <div 
       className="w-64 h-64 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 animate-float"
@@ -46,7 +46,7 @@ const SafariFallback = () => (
 export default function HeroSection() {
   const { theme } = useTheme();
   const [isLoading, setIsLoading] = useState(true);
-  const [isSafari, setIsSafari] = useState(false);
+  const [splineError, setSplineError] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const splineRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -54,12 +54,11 @@ export default function HeroSection() {
   // Only run on client-side
   useEffect(() => {
     setIsMounted(true);
-    setIsSafari(isSafariBrowser());
   }, []);
 
   // Handle cursor tracking via mouse position
   useEffect(() => {
-    if (!isMounted || isSafari) return;
+    if (!isMounted || !splineRef.current || splineError) return;
     
     const handleMouseMove = (e: MouseEvent) => {
       if (!containerRef.current || !splineRef.current) return;
@@ -79,6 +78,7 @@ export default function HeroSection() {
         }
       } catch (error) {
         // Silently handle errors
+        console.warn("Error setting Spline variables:", error);
       }
     };
 
@@ -86,7 +86,13 @@ export default function HeroSection() {
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
     };
-  }, [isMounted, isSafari]);
+  }, [isMounted, splineError]);
+
+  // Handle Spline load errors
+  const handleSplineError = (error: any) => {
+    console.error("Spline error:", error);
+    setSplineError(true);
+  };
 
   return (
     <section id="home" className="relative h-screen w-full overflow-hidden">
@@ -118,18 +124,19 @@ export default function HeroSection() {
           {!isMounted ? (
             // Initial loading state (server-side and first client render)
             <div className="w-full h-full"></div>
-          ) : isSafari ? (
-            // Safari fallback
-            <SafariFallback />
+          ) : splineError ? (
+            // Fallback when Spline fails to load
+            <SplineFallback />
           ) : (
-            // Spline for other browsers
+            // Try to load Spline for all browsers including Safari
             <Spline 
-              scene="https://prod.spline.design/XCi9THQBrzQxCOnd/scene.splinecode"
+              scene="/scene.splinecode"
               onLoad={(spline) => {
                 splineRef.current = spline;
                 setIsLoading(false);
                 console.log("Spline scene loaded");
               }}
+              onError={handleSplineError}
             />
           )}
         </div>
