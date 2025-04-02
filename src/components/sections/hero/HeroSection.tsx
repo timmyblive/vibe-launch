@@ -7,11 +7,7 @@ import { useTheme } from "@/context/ThemeContext";
 // Dynamically import Spline with no SSR to avoid hydration mismatch
 const Spline = dynamic(() => import("@splinetool/react-spline"), {
   ssr: false,
-  loading: () => (
-    <div className="w-full h-full flex items-center justify-center">
-      <div className="animate-pulse text-white/80">Loading 3D experience...</div>
-    </div>
-  ),
+  loading: () => <div className="w-full h-full"></div>, // Empty loading state
 });
 
 // Safari detection function - client-side only
@@ -121,9 +117,7 @@ export default function HeroSection() {
         <div className="absolute inset-0 md:left-1/3 z-10" ref={containerRef}>
           {!isMounted ? (
             // Initial loading state (server-side and first client render)
-            <div className="w-full h-full flex items-center justify-center">
-              <div className="animate-pulse text-white/80">Loading experience...</div>
-            </div>
+            <div className="w-full h-full"></div>
           ) : isSafari ? (
             // Safari fallback
             <SafariFallback />
@@ -140,13 +134,6 @@ export default function HeroSection() {
           )}
         </div>
       </div>
-
-      {/* Loading indicator */}
-      {isLoading && isMounted && (
-        <div className="absolute inset-0 z-30 flex items-center justify-center">
-          <div className="animate-pulse text-white/80">Loading interactive experience...</div>
-        </div>
-      )}
 
       {/* Scroll indicator */}
       <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce z-30 pointer-events-none">
