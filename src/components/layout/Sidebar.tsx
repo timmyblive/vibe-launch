@@ -104,11 +104,12 @@ export default function Sidebar({ className = "" }: SidebarProps) {
         <div className="flex flex-col h-full p-6">
           <div className="mb-8">
             <Image 
-              src={theme === 'dark' ? "/vibelaunchweblogomenu.png" : "/vibelaunchweblogolmmenu.png"} 
+              src={theme === 'dark' ? "/smalllogodark.png" : "/smalllogolight.png"} 
               alt="VibeLaunch Logo" 
               width={54} 
-              height={18}
+              height={54}
               priority
+              style={{ width: 'auto', height: 'auto' }}
             />
           </div>
           
@@ -139,7 +140,7 @@ export default function Sidebar({ className = "" }: SidebarProps) {
               </li>
               <li>
                 <a
-                  href="#whitepaper"
+                  href="#features"
                   className="flex items-center gap-2 p-2 rounded-lg hover:bg-accent/10 transition-colors"
                   onClick={() => setIsOpen(false)}
                 >
@@ -160,30 +161,7 @@ export default function Sidebar({ className = "" }: SidebarProps) {
                     <path d="M16 17H8" />
                     <path d="M10 9H8" />
                   </svg>
-                  White Paper
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#roadmap"
-                  className="flex items-center gap-2 p-2 rounded-lg hover:bg-accent/10 transition-colors"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M12 20h9" />
-                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
-                  </svg>
-                  Roadmap
+                  Features
                 </a>
               </li>
             </ul>
