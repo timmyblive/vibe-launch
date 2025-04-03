@@ -1,12 +1,16 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import Spline from "@splinetool/react-spline";
 import { useTheme } from "@/context/ThemeContext";
 
 export default function HeroSection() {
   const { theme } = useTheme(); // We can use the original variable name since we've disabled the unused vars rule
   const [isLoading, setIsLoading] = useState(true);
+  const [typingWord, setTypingWord] = useState('');
+  const [typingStatus, setTypingStatus] = useState('typing');
+  const words = ['friends', 'experts', 'community', 'partners'];
+  const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const splineRef = useRef<any>(null); // We can use 'any' since we've disabled the no-explicit-any rule
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -39,8 +43,34 @@ export default function HeroSection() {
     };
   }, []);
 
+  // Handle typing animation
+  useEffect(() => {
+    const typeWriter = () => {
+      const currentWord = words[currentWordIndex];
+      const currentLength = typingWord.length;
+
+      if (typingStatus === 'typing') {
+        if (currentLength < currentWord.length) {
+          setTypingWord(currentWord.substring(0, currentLength + 1));
+        } else {
+          setTimeout(() => setTypingStatus('deleting'), 2000);
+        }
+      } else if (typingStatus === 'deleting') {
+        if (currentLength > 0) {
+          setTypingWord(currentWord.substring(0, currentLength - 1));
+        } else {
+          setCurrentWordIndex((prev) => (prev + 1) % words.length);
+          setTypingStatus('typing');
+        }
+      }
+    };
+
+    const timer = setTimeout(typeWriter, typingStatus === 'typing' ? 150 : 50);
+    return () => clearTimeout(timer);
+  }, [typingWord, typingStatus, currentWordIndex]);
+
   return (
-    <section id="home" className="relative h-screen w-full overflow-hidden">
+    <section id="home" className="relative h-[80vh] w-full overflow-hidden">
       {/* Fallback background */}
       <div className={`absolute inset-0 z-0 transition-colors duration-500 ${
         isLoading ? "bg-gradient-to-br from-gray-900 to-gray-800" : "bg-transparent"
@@ -56,7 +86,12 @@ export default function HeroSection() {
                 Vibing is better
               </span>
               <br />
-              <span className="text-foreground drop-shadow-lg">with friends</span>
+              <span className="text-foreground drop-shadow-lg">
+                with <span className="inline-block">
+                  {typingWord || '\u00A0'}
+                  <span className="animate-pulse border-r-2 border-foreground ml-1 inline-block h-8 align-middle"></span>
+                </span>
+              </span>
             </h1>
             <p className="text-lg sm:text-xl md:text-2xl text-foreground/90 max-w-xl drop-shadow-sm">
               Join our community of creators and innovators building the future together.
