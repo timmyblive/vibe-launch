@@ -74,7 +74,11 @@ export default function Sidebar({ className = "" }: SidebarProps) {
         <div
           className="fixed bottom-6 left-6 z-50 p-2 rounded-md bg-accent text-white hover:blue-glow transition-all duration-300 cursor-pointer"
           aria-label="Menu"
-          onClick={() => setIsOpen(true)}
+          onClick={(e) => {
+            e.currentTarget.classList.add('animate-flip');
+            setTimeout(() => setIsOpen(true), 300);
+          }}
+          onAnimationEnd={(e) => e.currentTarget.classList.remove('animate-flip')}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

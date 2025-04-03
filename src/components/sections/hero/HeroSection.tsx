@@ -56,9 +56,9 @@ export default function HeroSection() {
                 Vibing is better
               </span>
               <br />
-              <span className="text-white drop-shadow-lg">with friends</span>
+              <span className="text-foreground drop-shadow-lg">with friends</span>
             </h1>
-            <p className="text-lg sm:text-xl md:text-2xl text-white/90 max-w-xl drop-shadow-sm">
+            <p className="text-lg sm:text-xl md:text-2xl text-foreground/90 max-w-xl drop-shadow-sm">
               Join our community of creators and innovators building the future together.
             </p>
           </div>
@@ -96,7 +96,7 @@ export default function HeroSection() {
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="text-white drop-shadow-lg"
+          className="text-foreground drop-shadow-lg"
         >
           <path d="M12 5v14M19 12l-7 7-7-7" />
         </svg>

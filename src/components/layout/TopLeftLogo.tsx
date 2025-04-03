@@ -15,8 +15,8 @@ export default function TopLeftLogo() {
           <Image 
             src="/vibelaunchhorlogodark.png" 
             alt="VibeLaunch Logo" 
-            width={120} 
-            height={40}
+            width={156} 
+            height={52}
             priority
             style={{ width: 'auto', height: 'auto' }}
           />
@@ -24,8 +24,8 @@ export default function TopLeftLogo() {
           <Image 
             src="/vibelaunchhorlogolight.png" 
             alt="VibeLaunch Logo" 
-            width={120} 
-            height={40}
+            width={156} 
+            height={52}
             priority
             style={{ width: 'auto', height: 'auto' }}
           />
